@@ -1,31 +1,36 @@
 {
-	"schemaVersion": 1,
-	"id": "versiont",
-	"version": "${version}",
-	"name": "Version't",
-	"description": "This is an example description! Tell everyone what your mod is about!",
-	"authors": [
-		"Me!"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/versiont/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"dev.gxlg.versiont.Versiont"
-		]
-	},
-	"mixins": [
-		"versiont.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~26.1-",
-		"java": ">=25",
-		"fabric-api": "*"
-	}
+  "schemaVersion": 1,
+  "id": "versiont",
+  "version": "${version}",
+  "name": "Version't",
+  "description": "A powerful java reflection layer and toolchain for Minecraft Fabric modding",
+  "authors": [
+    "gXLg"
+  ],
+  "contact": {
+    "homepage": "https://github.com/gXLg/versiont-toolchain/wiki",
+    "sources": "https://github.com/gXLg/versiont-lib",
+    "issues": "https://github.com/gXLg/versiont-lib/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/versiont/icon.png",
+  "environment": "*",
+  "entrypoints": {},
+  "mixins": [],
+  "depends": {
+    "minecraft": ">=1.17",
+    "java": ">=16"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ],
+      "links": {
+        "modmenu.discord": "https://discord.gg/aYBrWe5Jtt",
+        "modmenu.donate": "https://www.paypal.com/donate/?hosted_button_id=DVC2UQP2AXR68",
+        "modmenu.youtube": "https://www.youtube.com/@gXLg"
+      }
+    }
+  }
 }

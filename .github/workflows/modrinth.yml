@@ -1,0 +1,41 @@
+name: Publish on Modrinth
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: "temurin"
+          java-version: 25
+
+      - name: Mark Executable
+        run: chmod +x ./gradlew
+
+      - name: Build
+        uses: burrunan/gradle-cache-action@v3
+        with:
+          arguments: build
+
+      - name: Update description
+        uses: funnyboy-roks/modrinth-auto-desc@v1.5
+        with:
+          auth-token: ${{ secrets.MODRINTH_TOKEN }}
+          slug: fPR7FdSl
+
+      - name: Publish files to Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: fPR7FdSl
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-unfeature-mode: any

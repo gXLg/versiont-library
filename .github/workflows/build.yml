@@ -1,30 +1,49 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
+name: Build Project and Check Styling
 
-name: build
-on: [pull_request, push]
+on:
+  push:
+    branches: [ "**" ]
+    paths:
+      - "src/**"
+      - "gradle.properties"
+      - "build.gradle"
+      - ".github/workflows/build.yml"
+    tags-ignore: [ "**" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
+  build-and-check:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
     steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
-        uses: actions/setup-java@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
         with:
-          java-version: '25'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.0.0
+        with:
+          distribution: "temurin"
+          java-version: 25
+
+      - name: Mark executable
         run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew build
-      - name: capture build artifacts
-        uses: actions/upload-artifact@v4
+
+      - name: Build
+        uses: burrunan/gradle-cache-action@v3
         with:
-          name: Artifacts
-          path: build/libs/
+          arguments: build
+
+      - name: Cache IntelliJ IDEA
+        uses: actions/cache@v5
+        with:
+          path: .idea-cache
+          key: idea-cache-2025.3.0
+
+      - name: Format with IntelliJ IDEA
+        uses: gXLg/intellij-idea-format@ef6ec9cff204cad7bd33882f828bc74b556a7808
+        with:
+          idea-url: "https://download.jetbrains.com/idea/idea-2025.3.tar.gz"
