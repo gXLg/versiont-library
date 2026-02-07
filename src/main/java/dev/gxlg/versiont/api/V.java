@@ -1,4 +1,4 @@
-package dev.gxlg.versiont;
+package dev.gxlg.versiont.api;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

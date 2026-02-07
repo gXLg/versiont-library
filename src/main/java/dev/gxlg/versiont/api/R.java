@@ -1,4 +1,4 @@
-package dev.gxlg.versiont;
+package dev.gxlg.versiont.api;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
