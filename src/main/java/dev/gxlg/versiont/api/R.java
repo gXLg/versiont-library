@@ -213,17 +213,15 @@ public class R {
         }
     }
 
-    public interface RWrapperInterface<T extends RWrapper<?>> {
-        T wrapper();
-
-        default Object unwrap() {
-            return wrapper().unwrap();
-        }
+    public interface RWrapperInterface {
+        Object unwrap();
 
         default <S> S unwrap(Class<S> clazz) {
-            return wrapper().unwrap(clazz);
+            return clazz.cast(unwrap());
         }
     }
+
+    public record RedirectedCall(boolean isRedirected, Object result) { }
 
     public static class RClass {
         private final Supplier<Class<?>> lazyClz;
