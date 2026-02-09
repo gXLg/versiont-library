@@ -2,6 +2,7 @@ package dev.gxlg.versiont.api;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -26,6 +27,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -226,7 +230,7 @@ public class R {
     public static class RClass {
         private final Supplier<Class<?>> lazyClz;
 
-        private Class<?> clz = null;
+        private final AtomicReference<Class<?>> clz = new AtomicReference<>();
 
         private RClass(String names) {
             lazyClz = () -> {
@@ -243,6 +247,10 @@ public class R {
                     }
                 );
             };
+        }
+
+        private RClass(Supplier<Class<?>> loader) {
+            lazyClz = loader;
         }
 
         private RClass(Class<?> clz) {
@@ -270,10 +278,12 @@ public class R {
         }
 
         public Class<?> self() {
-            if (clz == null) {
-                clz = lazyClz.get();
-            }
-            return clz;
+            return clz.updateAndGet(clz -> {
+                if (clz == null) {
+                    return lazyClz.get();
+                }
+                return clz;
+            });
         }
 
         public RClass arrayType() {
@@ -309,7 +319,7 @@ public class R {
 
         private final Supplier<StoredMethod> lazyMethod;
 
-        private StoredMethod method = null;
+        private final AtomicReference<StoredMethod> method = new AtomicReference<>();
 
         public RMethod(Object inst, String names, Class<?> clz, Class<?>[] types) {
             this.inst = inst;
@@ -340,10 +350,12 @@ public class R {
         }
 
         public StoredMethod self() {
-            if (method == null) {
-                method = lazyMethod.get();
-            }
-            return method;
+            return method.updateAndGet(m -> {
+                if (m == null) {
+                    return lazyMethod.get();
+                }
+                return m;
+            });
         }
     }
 
@@ -352,7 +364,7 @@ public class R {
 
         private final Supplier<StoredField> lazyField;
 
-        private StoredField fld = null;
+        private final AtomicReference<StoredField> fld = new AtomicReference<>();
 
         public RField(Object inst, String names, Class<?> clz, Class<?> fieldType) {
             this.inst = inst;
@@ -383,10 +395,12 @@ public class R {
         }
 
         public StoredField self() {
-            if (fld == null) {
-                fld = lazyField.get();
-            }
-            return fld;
+            return fld.updateAndGet(fld -> {
+                if (fld == null) {
+                    return lazyField.get();
+                }
+                return fld;
+            });
         }
     }
 
@@ -395,7 +409,7 @@ public class R {
 
         private final Supplier<MethodHandle> lazyConstr;
 
-        private MethodHandle constr = null;
+        private final AtomicReference<MethodHandle> constr = new AtomicReference<>();
 
         private RConstructor(Class<?> clz, Class<?>... types) {
             this.clz = clz;
@@ -425,10 +439,12 @@ public class R {
         }
 
         public MethodHandle self() {
-            if (constr == null) {
-                constr = lazyConstr.get();
-            }
-            return constr;
+            return constr.updateAndGet(constr -> {
+                if (constr == null) {
+                    return lazyConstr.get();
+                }
+                return constr;
+            });
         }
     }
 
