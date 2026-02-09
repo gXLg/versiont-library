@@ -104,6 +104,16 @@ public class R {
         }
     }
 
+    public static void preload(RClass... classes) {
+        CompletableFuture.runAsync(
+            () -> {
+                for (RClass clz : classes) {
+                    clz.self();
+                }
+            }, Executors.newSingleThreadExecutor()
+        );
+    }
+
     public interface StoredMethod {
         Object invk(Object instance, Object[] args);
 
